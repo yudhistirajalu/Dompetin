@@ -191,9 +191,12 @@ export default function LandingPage() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { name: 'Budi Santoso', role: 'Karyawan Swasta', text: 'Sangat membantu saya mengontrol pengeluaran bulanan. UI-nya juga simpel dan mudah dipahami!' },
-              { name: 'Siti Nurhaliza', role: 'Pengusaha', text: 'Fitur analisisnya detail banget. Sekarang saya bisa track cash flow bisnis dengan lebih baik.' },
-              { name: 'Andi Wijaya', role: 'Mahasiswa', text: 'Gratis tapi fiturnya lengkap! Perfect untuk mahasiswa yang mau belajar manage keuangan.' }
+              { name: 'Tio', role: 'Mahasiswa', text: 'Sangat membantu saya mengontrol pengeluaran bulanan. UI-nya juga simpel dan mudah dipahami!' },
+              { name: 'Sasi', role: 'Mahasiswa', text: 'Fitur analisisnya detail banget. Sekarang saya bisa track cash flow bisnis dengan lebih baik.' },
+              { name: 'Pio', role: 'Mahasiswa', text: 'Gratis tapi fiturnya lengkap! Perfect untuk mahasiswa yang mau belajar manage keuangan.' },
+              { name: 'Fairuz', role: 'Mahasiswa', text: 'Sangat membantu saya mengontrol pengeluaran bulanan. UI-nya juga simpel dan mudah dipahami!' },
+              { name: 'Jalu', role: 'Mahasiswa', text: 'Fitur analisisnya detail banget. Sekarang saya bisa track cash flow bisnis dengan lebih baik.' },
+              { name: 'Regina', role: 'Mahasiswa', text: 'Gratis tapi fiturnya lengkap! Perfect untuk mahasiswa yang mau belajar manage keuangan.' }
             ].map((testimonial, i) => (
               <div key={i} className="p-8 bg-gray-50 rounded-xl">
                 <div className="text-yellow-400 text-2xl mb-4">★★★★★</div>

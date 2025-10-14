@@ -1,20 +1,22 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Dompet.in",
-  description: "website andalan untuk mengatur dan mengelola keuangan anda",
+  description: "Atur dan kelola keuanganmu dengan mudah",
 };
 
 export default function RootLayout({ children }) {
   return (
-    // Terapkan latar belakang ke elemen body
     <html lang="id">
-      <body className={`${inter.className} bg-[#22C55E]`}>
-        {children}
-      </body>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link 
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" 
+          rel="stylesheet" 
+        />
+      </head>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   );
 }
