@@ -1,23 +1,23 @@
 "use client";
-import { useState } from "react";
-import { 
-  LayoutDashboard, 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  Eye, 
-  EyeOff,
-  Wallet,
-  CreditCard,
-  FileText,
-  LogOut,
-  Menu,
-  X,
-  Plus,
+import {
+  ArrowDownRight,
+  ArrowUpRight,
   ChevronDown,
   ChevronUp,
-  Search,
-  Filter
+  CreditCard,
+  Eye,
+  EyeOff,
+  FileText,
+  Filter,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Plus,
+  Wallet,
+  X
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function TransactionPage() {
   const [showBalance, setShowBalance] = useState(true);
@@ -29,6 +29,8 @@ export default function TransactionPage() {
     kategori: "",
     catatan: ""
   });
+
+  const router = useRouter();
 
   // Data dummy
   const userData = {
@@ -62,8 +64,8 @@ export default function TransactionPage() {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", active: false, path: "/dashboard" },
     { icon: ArrowUpRight, label: "Transaction", active: true, path: "/transaction" },
-    { icon: CreditCard, label: "Loan & Debt", active: false, path: "/loan" },
-    { icon: FileText, label: "Bill Vault", active: false, path: "/bill" },
+    { icon: CreditCard, label: "Loan & Debt", active: false, path: "/loandebt" },
+    { icon: FileText, label: "Bill Vault", active: false, path: "/billvault" },
   ];
 
   const handleSubmit = (e) => {
@@ -91,19 +93,23 @@ export default function TransactionPage() {
           </div>
 
           <nav className="flex-1 p-4 space-y-2">
-            {menuItems.map((item, index) => (
-              <button
-                key={index}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                  item.active
-                    ? 'bg-green-50 text-green-600 font-medium'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <item.icon size={20} />
-                <span>{item.label}</span>
-              </button>
-            ))}
+            {menuItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={() => router.push(item.path)}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                    item.active
+                      ? 'bg-green-50 text-green-600 font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon size={20} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
           </nav>
 
           <div className="p-4 border-t border-gray-200">

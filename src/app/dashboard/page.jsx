@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { 
   LayoutDashboard, 
   ArrowUpRight, 
@@ -18,12 +19,13 @@ import {
 export default function DashboardPage() {
   const [showBalance, setShowBalance] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  
   // Data dummy
   const userData = {
     name: "Farhan",
     balance: 1234567890.00,
   };
+
+  const router = useRouter();
 
   const topExpenses = [
     { label: "lah bajol", amount: 123000, percentage: 25 },
@@ -49,10 +51,10 @@ export default function DashboardPage() {
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", active: true },
-    { icon: ArrowUpRight, label: "Transaction", active: false },
-    { icon: CreditCard, label: "Loan & Debt", active: false },
-    { icon: FileText, label: "Bill Vault", active: false },
+    { icon: LayoutDashboard, label: "Dashboard", active: true, path: "/" },
+    { icon: ArrowUpRight, label: "Transaction", active: false, path: "/transaction" },
+    { icon: CreditCard, label: "Loan & Debt", active: false, path: "/loandebt" },
+    { icon: FileText, label: "Bill Vault", active: false, path: "/billvault" },
   ];
 
   return (
@@ -70,24 +72,28 @@ export default function DashboardPage() {
 
           {/* Menu Items */}
           <nav className="flex-1 p-4 space-y-2">
-            {menuItems.map((item, index) => (
-              <button
-                key={index}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
-                  item.active
-                    ? 'bg-green-50 text-green-600 font-medium'
-                    : 'text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                <item.icon size={20} />
-                <span>{item.label}</span>
-              </button>
-            ))}
+            {menuItems.map((item, index) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  key={index}
+                  onClick={() => router.push(item.path)}
+                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
+                    item.active
+                      ? 'bg-green-50 text-green-600 font-medium'
+                      : 'text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <Icon size={20} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
           </nav>
 
           {/* Logout */}
           <div className="p-4 border-t border-gray-200">
-            <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition">
+            <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition" onClick={() => {/* tambahkan logout handler jika perlu */}}>
               <LogOut size={20} />
               <span>Keluar</span>
             </button>
@@ -118,7 +124,7 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-500">Welcome back,</p>
               <h2 className="text-xl font-bold text-gray-900">{userData.name}</h2>
             </div>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition">
+            <button className="p-2 hover:bg-gray-100 rounded-lg transition" onClick={() => {/* tombol logout header */}}>
               <LogOut size={20} className="text-gray-600" />
             </button>
           </div>
@@ -264,7 +270,7 @@ export default function DashboardPage() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200">
             <div className="p-6 border-b border-gray-200 flex items-center justify-between">
               <h3 className="text-lg font-bold text-gray-900">Transaksi Terbaru</h3>
-              <button className="text-sm text-green-600 hover:text-green-700 font-medium">
+              <button className="text-sm text-green-600 hover:text-green-700 font-medium" onClick={() => router.push('/transactions')}>
                 Lihat Semua →
               </button>
             </div>

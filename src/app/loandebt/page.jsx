@@ -1,21 +1,23 @@
 "use client";
-import { useState } from "react";
-import { 
-  LayoutDashboard, 
-  ArrowUpRight, 
-  Eye, 
-  EyeOff,
+import {
+  ArrowUpRight,
   CreditCard,
+  Edit,
+  Eye,
+  EyeOff,
   FileText,
+  LayoutDashboard,
   LogOut,
   Menu,
-  X,
   Plus,
   Trash2,
-  Edit
+  X
 } from "lucide-react";
+import { useRouter } from 'next/navigation';
+import { useState } from "react";
 
 export default function LoanDebtPage() {
+  const router = useRouter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUtangBalance, setShowUtangBalance] = useState(true);
   const [showPiutangBalance, setShowPiutangBalance] = useState(true);
@@ -53,10 +55,10 @@ export default function LoanDebtPage() {
   };
 
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard", active: false },
-    { icon: ArrowUpRight, label: "Transaction", active: false },
-    { icon: CreditCard, label: "Loan & Debt", active: true },
-    { icon: FileText, label: "Bill Vault", active: false },
+    { icon: LayoutDashboard, label: "Dashboard", active: false, path: "/dashboard" },
+    { icon: ArrowUpRight, label: "Transaction", active: false, path: "/transaction" },
+    { icon: CreditCard, label: "Loan & Debt", active: true, path: "/loandebt" },
+    { icon: FileText, label: "Bill Vault", active: false, path: "/billvault" },
   ];
 
   const handleSubmit = (e) => {
@@ -87,6 +89,7 @@ export default function LoanDebtPage() {
             {menuItems.map((item, index) => (
               <button
                 key={index}
+                onClick={() => router.push(item.path)}
                 className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition ${
                   item.active
                     ? 'bg-green-50 text-green-600 font-medium'
