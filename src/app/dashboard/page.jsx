@@ -124,8 +124,12 @@ export default function DashboardPage() {
               <p className="text-sm text-gray-500">Welcome back,</p>
               <h2 className="text-xl font-bold text-gray-900">{userData.name}</h2>
             </div>
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition" onClick={() => {/* tombol logout header */}}>
-              <LogOut size={20} className="text-gray-600" />
+            <button 
+              onClick={() => router.push('/')} 
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition flex items-center space-x-2"
+            >
+              <span>keluar</span>
+              <LogOut size={16} />
             </button>
           </div>
         </header>
