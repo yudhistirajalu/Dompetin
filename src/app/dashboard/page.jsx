@@ -13,12 +13,14 @@ import {
   FileText,
   LogOut,
   Menu,
-  X
+  X,
+  AlertTriangle
 } from "lucide-react";
 
 export default function DashboardPage() {
   const [showBalance, setShowBalance] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   // Data dummy
   const userData = {
     name: "Farhan",
@@ -57,6 +59,11 @@ export default function DashboardPage() {
     { icon: FileText, label: "Bill Vault", active: false, path: "/billvault" },
   ];
 
+  const handleLogout = () => {
+    setShowLogoutModal(false);
+    router.push('/');
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
@@ -93,7 +100,10 @@ export default function DashboardPage() {
 
           {/* Logout */}
           <div className="p-4 border-t border-gray-200">
-            <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition" onClick={() => {/* tambahkan logout handler jika perlu */}}>
+            <button 
+              onClick={() => setShowLogoutModal(true)}
+              className="w-full flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition"
+            >
               <LogOut size={20} />
               <span>Keluar</span>
             </button>
@@ -125,7 +135,7 @@ export default function DashboardPage() {
               <h2 className="text-xl font-bold text-gray-900">{userData.name}</h2>
             </div>
             <button 
-              onClick={() => router.push('/')} 
+              onClick={() => setShowLogoutModal(true)}
               className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition flex items-center space-x-2"
             >
               <span>keluar</span>
@@ -309,6 +319,43 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
+            <div className="p-6">
+              {/* Icon */}
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="text-red-600" size={32} />
+              </div>
+
+              {/* Content */}
+              <div className="text-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Keluar dari Akun?</h3>
+                <p className="text-gray-600">
+                  Apakah Anda yakin ingin keluar dari akun Anda? Anda perlu masuk kembali untuk mengakses dashboard.
+                </p>
+              </div>
+
+              {/* Buttons */}
+              <div className="flex flex-col-reverse sm:flex-row gap-3">
+                <button
+                  onClick={() => setShowLogoutModal(false)}
+                  className="flex-1 px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold shadow-lg hover:shadow-xl"
+                >
+                  Ya, Keluar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
