@@ -1,79 +1,20 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
+// Define database connection via the `DATABASE_URL` env var
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model jenis_transaksi {
-  id_jenis                 Int                        @id @default(autoincrement())
-  jenis                    String                     @unique @db.VarChar(50)
-  kategori_jenis_transaksi kategori_jenis_transaksi[]
-  transaksi                transaksi[]
+// Define custom output path for generated Prisma Client
+generator client {
+  provider = "prisma-client-js"
 }
 
-model kalender {
-  tanggal DateTime @id @db.Date
-}
 
-model kategori {
-  id_kategori              Int                        @id @default(autoincrement())
-  nama_kategori            String                     @unique @db.VarChar(100)
-  kategori_jenis_transaksi kategori_jenis_transaksi[]
-  transaksi                transaksi[]
-}
-
-model kategori_jenis_transaksi {
-  id_jenis        Int
-  id_kategori     Int
-  jenis_transaksi jenis_transaksi @relation(fields: [id_jenis], references: [id_jenis], onDelete: Cascade, onUpdate: NoAction)
-  kategori        kategori        @relation(fields: [id_kategori], references: [id_kategori], onDelete: Cascade, onUpdate: NoAction)
-
-  @@id([id_jenis, id_kategori])
-}
-
-model nota {
-  id_nota      Int       @id @default(autoincrement())
-  id_transaksi Int       @unique
-  foto_nota    String    @db.VarChar(255)
-  detail_nota  String?
-  timestamp    DateTime  @default(now()) @db.Timestamptz(6)
-  transaksi    transaksi @relation(fields: [id_transaksi], references: [id_transaksi], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model saldo {
-  id_saldo          Int       @id @default(autoincrement())
-  id_user           Int
-  id_transaksi      Int       @unique
-  saldo_hasil       Decimal   @db.Decimal(15, 2)
-  timestamp_catatan DateTime  @db.Timestamptz(6)
-  transaksi         transaksi @relation(fields: [id_transaksi], references: [id_transaksi], onDelete: Cascade, onUpdate: NoAction)
-  user              user      @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model transaksi {
-  id_transaksi     Int             @id @default(autoincrement())
-  id_user          Int
-  detail_transaksi String?
-  id_jenis         Int
-  id_kategori      Int
-  nominal          Decimal         @db.Decimal(15, 2)
-  saldo_terakhir   Decimal         @db.Decimal(15, 2)
-  timestamp        DateTime        @default(now()) @db.Timestamptz(6)
-  nota             nota?
-  saldo            saldo?
-  jenis_transaksi  jenis_transaksi @relation(fields: [id_jenis], references: [id_jenis], onDelete: NoAction, onUpdate: NoAction)
-  kategori         kategori        @relation(fields: [id_kategori], references: [id_kategori], onDelete: NoAction, onUpdate: NoAction)
-  user             user            @relation(fields: [id_user], references: [id_user], onDelete: Cascade, onUpdate: NoAction)
-}
-
-model user {
-  id_user       Int         @id @default(autoincrement())
-  email         String      @unique @db.VarChar(255)
-  nickname      String      @db.VarChar(50)
-  hash_password String      @db.VarChar(255)
-  saldo         saldo[]
-  transaksi     transaksi[]
+// Example data model
+model User {
+  id         Int      @id @default(autoincrement())
+  supabaseId String?  @unique
+  email      String?  @unique
+  name       String?
+  createdAt  DateTime @default(now())
 }

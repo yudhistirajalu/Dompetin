@@ -1,29 +1,18 @@
 "use client";
 import {
-  ArrowDownRight,
-  ArrowUpRight,
-  ChevronDown,
-  ChevronUp,
-  CreditCard,
-  Eye,
-  EyeOff,
-  FileText,
-  Filter,
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  Plus,
-  Wallet,
-  X,
-  AlertTriangle
+  ArrowDownRight, ArrowUpRight, ChevronDown, ChevronUp, CreditCard,
+  Eye, EyeOff, FileText, Filter, LayoutDashboard, LogOut, Menu, Plus,
+  Wallet, X, AlertTriangle, Camera, Image as ImageIcon
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function TransactionPage() {
+  const [showMenu, setShowMenu] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false); // pengganti showModal
+  const [showOCR, setShowOCR] = useState(false);
   const [showBalance, setShowBalance] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [activeTab, setActiveTab] = useState("pemasukan");
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleLogout = () => {
@@ -77,7 +66,7 @@ export default function TransactionPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", { ...formData, type: activeTab });
-    setShowModal(false);
+    setShowAddModal(false);
     setFormData({ nominal: "", kategori: "", catatan: "" });
   };
 
@@ -266,16 +255,32 @@ export default function TransactionPage() {
         </div>
       </main>
 
-      {/* Floating Action Button */}
+      <div className="fixed bottom-8 right-8 z-40">
+  {showMenu && (
+    <div className="mb-3 flex flex-col items-end space-y-3">
       <button
-        onClick={() => setShowModal(true)}
-        className="fixed bottom-8 right-8 w-16 h-16 bg-gray-600 hover:bg-gray-700 text-white rounded-2xl shadow-2xl flex items-center justify-center transition transform hover:scale-105 z-40"
-      >
-        <Plus size={32} />
+        onClick={() => { setShowMenu(false); setShowOCR(true); }}
+        className="flex items-center gap-2 px-4 py-2 rounded-xl shadow-xl bg-white border border-gray-200 hover:bg-gray-50">
+        <Camera size={18} className="text-gray-700" />
+        <span className="text-sm font-medium text-gray-700">Scan nota (OCR)</span>
       </button>
+      <button
+        onClick={() => { setShowMenu(false); setShowAddModal(true); }}
+        className="flex items-center gap-2 px-4 py-2 rounded-xl shadow-xl bg-white border border-gray-200 hover:bg-gray-50">
+        <Plus size={18} className="text-gray-700" />
+        <span className="text-sm font-medium text-gray-700">Tambah transaksi</span>
+      </button>
+    </div>
+  )}
+  <button
+    onClick={() => setShowMenu(v => !v)}
+    className="w-16 h-16 rounded-2xl shadow-2xl bg-gray-600 hover:bg-gray-700 text-white flex items-center justify-center transition transform hover:scale-105">
+    {showMenu ? <X size={28} /> : <Plus size={32} />}
+  </button>
+</div>
 
       {/* Modal */}
-      {showModal && (
+      {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-y-auto">
             {/* Modal Header with Tabs */}
@@ -303,6 +308,21 @@ export default function TransactionPage() {
                 </button>
               </div>
             </div>
+
+      {/* OCR Modal */}
+      <OCRModal
+        open={showOCR}
+        onClose={() => setShowOCR(false)}
+        onParsed={(parsed) => {
+          setActiveTab("pengeluaran");
+          setFormData({
+            nominal: parsed.amount ? String(parsed.amount) : "",
+            kategori: parsed.category || "",
+            catatan: parsed.title || "",
+          });
+          setShowAddModal(true);
+        }}
+      />
 
             {/* Modal Body */}
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
@@ -364,7 +384,7 @@ export default function TransactionPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setShowModal(false);
+                    setShowAddModal(false);
                     setFormData({ nominal: "", kategori: "", catatan: "" });
                   }}
                   className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-medium"
@@ -419,6 +439,39 @@ export default function TransactionPage() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+function OCRModal({ open, onClose, onParsed }) {
+  if (!open) return null;
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // nanti logic OCR-nya temenmu isi di sini
+    const parsed = {
+      amount: 12000,
+      category: "Makanan",
+      title: "Nota Warung Bu Yati",
+    };
+
+    onParsed(parsed);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 text-center">
+        <h3 className="text-xl font-semibold mb-4">Scan Nota (OCR)</h3>
+        <input type="file" accept="image/*" capture="environment" onChange={handleFileChange} />
+        <button
+          onClick={onClose}
+          className="mt-4 px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700"
+        >
+          Batal
+        </button>
+      </div>
     </div>
   );
 }

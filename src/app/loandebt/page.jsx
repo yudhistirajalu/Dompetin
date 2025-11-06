@@ -1,5 +1,6 @@
 "use client";
 import {
+  AlertTriangle,
   ArrowUpRight,
   CreditCard,
   Edit,
@@ -12,13 +13,19 @@ import {
   Plus,
   Trash2,
   X,
-  AlertTriangle
+  Inbox
 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { useState } from "react";
 
 export default function LoanDebtPage() {
   const router = useRouter();
+  const [utangList, setUtangList] = useState([]);
+  const [piutangList, setPiutangList] = useState([]);
+  const totalUtang = utangList.reduce((s, x) => s + x.amount, 0);
+  const totalPiutang = piutangList.reduce((s, x) => s + x.amount, 0);
+  const isUtangEmpty = utangList.length === 0;
+  const isPiutangEmpty = piutangList.length === 0;
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showUtangBalance, setShowUtangBalance] = useState(true);
   const [showPiutangBalance, setShowPiutangBalance] = useState(true);
@@ -27,7 +34,7 @@ export default function LoanDebtPage() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const handleLogout = () => {
     setShowLogoutModal(false);
-    router.push('/');
+    router.push('/login');
   };
   const [formData, setFormData] = useState({
     nama: "",
@@ -35,22 +42,32 @@ export default function LoanDebtPage() {
     catatan: ""
   });
 
+  const handleSubmit = (e) => {
+  e.preventDefault();
+
+  const newItem = {
+    id: Date.now(),
+    name: formData.nama,
+    amount: Number(formData.jumlah),
+    progress: 0,             // default progress
+    date: new Date().toLocaleDateString("id-ID"),
+  };
+
+  if (activeType === "utang") {
+    setUtangList(prev => [newItem, ...prev]);
+  } else {
+    setPiutangList(prev => [newItem, ...prev]);
+  }
+
+  setShowModal(false);
+  setFormData({ nama: "", jumlah: "", catatan: "" });
+  };
+
   const userData = {
     name: "Farhan",
     totalUtang: 200000.00,
     totalPiutang: 100000.00,
   };
-
-  const utangList = [
-    { id: 1, name: "utang ke tio", amount: 100000, progress: 60, date: "10/11/2025" },
-    { id: 2, name: "utang supermarket", amount: 50000, progress: 80, date: "15/11/2025" },
-    { id: 3, name: "cicilan motor", amount: 30000, progress: 40, date: "20/11/2025" },
-  ];
-
-  const piutangList = [
-    { id: 1, name: "rizky", amount: 50000, progress: 50, date: "12/11/2025" },
-    { id: 2, name: "andi bayar", amount: 30000, progress: 70, date: "18/11/2025" },
-  ];
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('id-ID', {
@@ -67,17 +84,26 @@ export default function LoanDebtPage() {
     { icon: FileText, label: "Bill Vault", active: false, path: "/billvault" },
   ];
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", { ...formData, type: activeType });
-    setShowModal(false);
-    setFormData({ nama: "", jumlah: "", catatan: "" });
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
+
+  function EmptyBlock({ text, tone = "light" }) {
+    const wrap = tone === "light" ? "bg-white/20" : "bg-white/10";
+    const badge = tone === "light" ? "bg-white/30 text-white" : "bg-white/20 text-white";
+    const title = "text-white/90";
+    const subtitle = "text-white/70";
+    return (
+      <div className={`${wrap} rounded-xl p-8 text-center`}>
+        <div className={`mx-auto mb-3 w-10 h-10 rounded-full flex items-center justify-center ${badge}`}>
+          <Inbox size={20} />
+        </div>
+        <p className={`${title} font-medium`}>{text}</p>
+        <p className={`${subtitle} text-sm`}>Tekan tombol + untuk menambahkan</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -195,7 +221,10 @@ export default function LoanDebtPage() {
             <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-6 shadow-lg">
               <h3 className="text-xl font-bold text-white mb-6">list utang</h3>
               <div className="space-y-4">
-                {utangList.map((item) => (
+                {isUtangEmpty ? (
+                  <EmptyBlock text="Anda tidak memiliki utang saat ini" tone="light" />
+                ) : (
+                utangList.map((item) => (
                   <div key={item.id} className="bg-white bg-opacity-20 backdrop-blur-sm rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-white font-medium text-sm">
@@ -221,7 +250,8 @@ export default function LoanDebtPage() {
                       </div>
                     </div>
                   </div>
-                ))}
+                ))
+              )}
               </div>
             </div>
 
@@ -229,7 +259,10 @@ export default function LoanDebtPage() {
             <div className="bg-gradient-to-br from-slate-700 to-slate-800 rounded-2xl p-6 shadow-lg">
               <h3 className="text-xl font-bold text-white mb-6">list piutang</h3>
               <div className="space-y-4">
-                {piutangList.map((item) => (
+                {isPiutangEmpty ? (
+                  <EmptyBlock text="Anda tidak memiliki piutang saat ini" tone="dark" />
+                ) : (
+                piutangList.map((item) => (
                   <div key={item.id} className="bg-white bg-opacity-10 backdrop-blur-sm rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-white font-medium text-sm">
@@ -255,7 +288,8 @@ export default function LoanDebtPage() {
                       </div>
                     </div>
                   </div>
-                ))}
+                ))
+              )}
               </div>
             </div>
           </div>
